@@ -24,7 +24,11 @@ class ReadFileTool(Tool):
     """
 
     def apply(
-        self, relative_path: str, start_line: int = 0, end_line: int | None = None, max_answer_chars: int = TOOL_DEFAULT_MAX_ANSWER_LENGTH
+        self,
+        relative_path: str,
+        start_line: int | str = 0,
+        end_line: int | str | None = None,
+        max_answer_chars: int | str = TOOL_DEFAULT_MAX_ANSWER_LENGTH,
     ) -> str:
         """
         Reads the given file or a chunk of it. Generally, symbolic operations
@@ -39,6 +43,20 @@ class ReadFileTool(Tool):
         :return: the full text of the file at the given relative path
         """
         self.project.validate_relative_path(relative_path)
+
+        # Coerce possibly string-typed params coming from some MCP clients (e.g., end_line: "")
+        if isinstance(start_line, str):
+            start_line = int(start_line) if start_line.strip() else 0
+        if isinstance(end_line, str):
+            end_line = int(end_line) if end_line.strip() else None
+        if isinstance(max_answer_chars, str):
+            max_answer_chars = int(max_answer_chars) if max_answer_chars.strip() else TOOL_DEFAULT_MAX_ANSWER_LENGTH
+
+        # Guardrails
+        start_line = max(0, int(start_line))
+        if isinstance(end_line, int) and end_line < start_line:
+            # Normalize weird ranges by treating as "read to EOF"
+            end_line = None
 
         result = self.project.read_file(relative_path)
         result_lines = result.splitlines()
