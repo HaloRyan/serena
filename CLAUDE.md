@@ -75,6 +75,11 @@ Each supported language has:
 5. Write test suite in `test/solidlsp/<language>/`
 6. Add pytest marker to `pyproject.toml`
 
+### Running Single Tests
+- `uv run poe test test/specific_test.py` - Run specific test file
+- `uv run poe test -k "test_function_name"` - Run specific test function
+- `uv run poe test -v` - Verbose test output for debugging
+
 ### Adding New Tools
 1. Inherit from `Tool` base class in `src/serena/tools/tools_base.py`
 2. Implement required methods and parameter validation

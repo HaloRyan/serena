@@ -844,7 +844,6 @@ Here is the list of Serena's default tools with a short description (output of `
 * `prepare_for_new_conversation`: Provides instructions for preparing for a new conversation (in order to continue with the necessary context).
 * `read_file`: Reads a file within the project directory.
 * `read_memory`: Reads the memory with the given name from Serena's project-specific memory store.
-* `replace_regex`: Replaces content in a file by using regular expressions.
 * `replace_symbol_body`: Replaces the full definition of a symbol.
 * `search_for_pattern`: Performs a search for a pattern in the project.
 * `think_about_collected_information`: Thinking tool for pondering the completeness of collected information.
