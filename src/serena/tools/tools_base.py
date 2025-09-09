@@ -101,12 +101,6 @@ class ToolMarkerSymbolicRead(ToolMarker):
     """
 
 
-class ToolMarkerSymbolicEdit(ToolMarkerCanEdit):
-    """
-    Marker class for tools that perform symbolic edit operations.
-    """
-
-
 class ApplyMethodProtocol(Protocol):
     """Callable protocol for the apply method of a tool."""
 

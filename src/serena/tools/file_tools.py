@@ -8,13 +8,12 @@ File and file system-related tools, specifically for
 
 import json
 import os
-import re
 from collections import defaultdict
 from fnmatch import fnmatch
 from pathlib import Path
 
 from serena.text_utils import search_files
-from serena.tools import SUCCESS_RESULT, TOOL_DEFAULT_MAX_ANSWER_LENGTH, EditedFileContext, Tool, ToolMarkerCanEdit, ToolMarkerOptional
+from serena.tools import TOOL_DEFAULT_MAX_ANSWER_LENGTH, Tool, ToolMarkerCanEdit
 from serena.util.file_system import scan_directory
 
 
@@ -175,96 +174,6 @@ class FindFileTool(Tool):
 
         result = json.dumps({"files": files})
         return result
-
-
-
-
-
-class DeleteLinesTool(Tool, ToolMarkerCanEdit, ToolMarkerOptional):
-    """
-    Deletes a range of lines within a file.
-    """
-
-    def apply(
-        self,
-        relative_path: str,
-        start_line: int,
-        end_line: int,
-    ) -> str:
-        """
-        Deletes the given lines in the file.
-        Requires that the same range of lines was previously read using the `read_file` tool to verify correctness
-        of the operation.
-
-        :param relative_path: the relative path to the file
-        :param start_line: the 0-based index of the first line to be deleted
-        :param end_line: the 0-based index of the last line to be deleted
-        """
-        if not self.lines_read.were_lines_read(relative_path, (start_line, end_line)):
-            read_lines_tool = self.agent.get_tool(ReadFileTool)
-            return f"Error: Must call `{read_lines_tool.get_name_from_cls()}` first to read exactly the affected lines."
-        code_editor = self.create_code_editor()
-        code_editor.delete_lines(relative_path, start_line, end_line)
-        return SUCCESS_RESULT
-
-
-class ReplaceLinesTool(Tool, ToolMarkerCanEdit, ToolMarkerOptional):
-    """
-    Replaces a range of lines within a file with new content.
-    """
-
-    def apply(
-        self,
-        relative_path: str,
-        start_line: int,
-        end_line: int,
-        content: str,
-    ) -> str:
-        """
-        Replaces the given range of lines in the given file.
-        Requires that the same range of lines was previously read using the `read_file` tool to verify correctness
-        of the operation.
-
-        :param relative_path: the relative path to the file
-        :param start_line: the 0-based index of the first line to be deleted
-        :param end_line: the 0-based index of the last line to be deleted
-        :param content: the content to insert
-        """
-        if not content.endswith("\n"):
-            content += "\n"
-        result = self.agent.get_tool(DeleteLinesTool).apply(relative_path, start_line, end_line)
-        if result != SUCCESS_RESULT:
-            return result
-        self.agent.get_tool(InsertAtLineTool).apply(relative_path, start_line, content)
-        return SUCCESS_RESULT
-
-
-class InsertAtLineTool(Tool, ToolMarkerCanEdit, ToolMarkerOptional):
-    """
-    Inserts content at a given line in a file.
-    """
-
-    def apply(
-        self,
-        relative_path: str,
-        line: int,
-        content: str,
-    ) -> str:
-        """
-        Inserts the given content at the given line in the file, pushing existing content of the line down.
-        In general, symbolic insert operations like insert_after_symbol or insert_before_symbol should be preferred if you know which
-        symbol you are looking for.
-        However, this can also be useful for small targeted edits of the body of a longer symbol (without replacing the entire body).
-
-        :param relative_path: the relative path to the file
-        :param line: the 0-based index of the line to insert content at
-        :param content: the content to be inserted
-        """
-        if not content.endswith("\n"):
-            content += "\n"
-        code_editor = self.create_code_editor()
-        code_editor.insert_at_line(relative_path, line, content)
-        return SUCCESS_RESULT
 
 
 class SearchForPatternTool(Tool):
