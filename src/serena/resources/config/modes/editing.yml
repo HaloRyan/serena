@@ -20,10 +20,4 @@ prompt: |
   3. Provide the exact code that should be written
   4. Suggest using external editors or IDEs for implementation
 
-excluded_tools:
- - replace_lines
- - insert_at_line
- - delete_lines
- - replace_symbol_body
- - insert_after_symbol
- - insert_before_symbol
+excluded_tools: []

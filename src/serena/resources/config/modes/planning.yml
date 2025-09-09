@@ -5,11 +5,4 @@ prompt: |
   either a small aspect of it or about the whole project.
 excluded_tools:
   - create_text_file
-  - replace_symbol_body
-  - insert_after_symbol
-  - insert_before_symbol
-  - delete_lines
-  - replace_lines
-  - insert_at_line
   - execute_shell_command
-  - replace_regex
