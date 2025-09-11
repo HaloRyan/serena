@@ -10,10 +10,9 @@ import json
 import os
 from collections import defaultdict
 from fnmatch import fnmatch
-from pathlib import Path
 
 from serena.text_utils import search_files
-from serena.tools import TOOL_DEFAULT_MAX_ANSWER_LENGTH, Tool, ToolMarkerCanEdit
+from serena.tools import TOOL_DEFAULT_MAX_ANSWER_LENGTH, Tool
 from serena.util.file_system import scan_directory
 
 
@@ -67,38 +66,6 @@ class ReadFileTool(Tool):
         result = "\n".join(result_lines)
 
         return self._limit_length(result, max_answer_chars)
-
-
-class CreateTextFileTool(Tool, ToolMarkerCanEdit):
-    """
-    Creates/overwrites a file in the project directory.
-    """
-
-    def apply(self, relative_path: str, content: str) -> str:
-        """
-        Write a new file or overwrite an existing file.
-
-        :param relative_path: the relative path to the file to create
-        :param content: the (utf-8-encoded) content to write to the file
-        :return: a message indicating success or failure
-        """
-        project_root = self.get_project_root()
-        abs_path = (Path(project_root) / relative_path).resolve()
-        will_overwrite_existing = abs_path.exists()
-
-        if will_overwrite_existing:
-            self.project.validate_relative_path(relative_path)
-        else:
-            assert abs_path.is_relative_to(
-                self.get_project_root()
-            ), f"Cannot create file outside of the project directory, got {relative_path=}"
-
-        abs_path.parent.mkdir(parents=True, exist_ok=True)
-        abs_path.write_text(content, encoding="utf-8")
-        answer = f"File created: {relative_path}."
-        if will_overwrite_existing:
-            answer += " Overwrote existing file."
-        return json.dumps(answer)
 
 
 class ListDirTool(Tool):

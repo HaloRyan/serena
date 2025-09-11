@@ -6,5 +6,3 @@ prompt: |
   In this mode, you should not be modifying any existing files.
   If you are also in interactive mode and something about the project is unclear, ask the user for clarification.
 excluded_tools:
-  - create_text_file
-  - execute_shell_command

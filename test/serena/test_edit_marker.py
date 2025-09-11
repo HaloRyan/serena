@@ -1,4 +1,4 @@
-from serena.tools import CreateTextFileTool, ReadFileTool, Tool
+from serena.tools import ReadFileTool, Tool
 
 
 class TestEditMarker:
@@ -9,5 +9,3 @@ class TestEditMarker:
         assert not ReadFileTool.can_edit()
 
         # Editing tool should return True
-        assert issubclass(CreateTextFileTool, Tool)
-        assert CreateTextFileTool.can_edit()
